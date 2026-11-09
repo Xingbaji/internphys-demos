@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>InternPhys · 书生·万殊 — 物理一致的 GPU 仿真引擎</title>
+<title>【预览版】InternPhys · 书生·万殊 — 物理一致的 GPU 仿真引擎</title>
 <meta name="description" content="InternPhys（书生·万殊）：上海人工智能实验室的 GPU 物理仿真引擎。理一分殊——一套物理规律，统一求解刚体、软体、布料、杆与机器人；接触物理一致，保证无穿透。">
 <style>
 :root {
@@ -123,6 +123,7 @@ dialog dt { color: var(--ink-3); } dialog dd { margin: 0; font-variant-numeric: 
 dialog .close { position: absolute; top: 10px; right: 10px; width: 36px; height: 36px; border-radius: 50%; border: none;
   background: rgba(0,0,0,.55); color: #fff; font-size: 20px; cursor: pointer; z-index: 2; }
 
+.notice { background: var(--warn-soft); color: var(--warn); font-size: 13px; text-align: center; padding: 7px 16px; font-weight: 600; }
 footer { border-top: 1px solid var(--line); padding: 28px 0 48px; color: var(--ink-3); font-size: 13px; }
 footer p { margin: 4px 0; max-width: 900px; }
 .hidden { display: none !important; }
@@ -134,6 +135,7 @@ footer p { margin: 4px 0; max-width: 900px; }
 </style>
 </head>
 <body>
+<div class="notice" role="note">预览版 · 非正式发布：本页为临时演示网页，内容与数据可能随时调整，请勿作为正式资料引用。</div>
 <header class="top"><div class="wrap">
   <a class="brand" href="#top">Intern<span>Phys</span><small>书生·万殊</small></a>
   <nav class="tabs" id="tabs"></nav>
@@ -158,6 +160,7 @@ footer p { margin: 4px 0; max-width: 900px; }
 <footer><div class="wrap">
   <p>视频均由仿真结果渲染。卡片上的“求解”是整段仿真在单块 GPU（NVIDIA RTX 4090 / 5090）上的求解耗时，不含渲染；“每帧”是单帧求解时间的中位数。</p>
   <p>鼠标悬停可预览，点击卡片查看大图与说明。© 上海人工智能实验室 · InternPhys 书生·万殊</p>
+  <p>预览版 · 非正式发布：本页为临时演示网页，内容与数据可能随时调整，请勿作为正式资料引用。</p>
 </div></footer>
 
 <dialog id="dlg"><button class="close" aria-label="关闭">×</button><video id="dvid" controls loop playsinline muted></video>
