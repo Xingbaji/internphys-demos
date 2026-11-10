@@ -5,6 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>【预览版】InternPhys · 书生·万殊 — 物理一致的 GPU 仿真引擎</title>
 <meta name="description" content="InternPhys（书生·万殊）：上海人工智能实验室的 GPU 物理仿真引擎。理一分殊——一套物理规律，统一求解刚体、软体、布料、杆与机器人；接触物理一致，保证无穿透。">
+<link rel="canonical" href="https://xingbaji.github.io/internphys-demos/">
+<link rel="alternate" hreflang="zh-CN" href="https://xingbaji.github.io/internphys-demos/">
+<link rel="alternate" hreflang="en" href="https://xingbaji.github.io/internphys-demos/en.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="【预览版】InternPhys · 书生·万殊 — 物理一致的 GPU 仿真引擎">
+<meta property="og:description" content="InternPhys（书生·万殊）：上海人工智能实验室的 GPU 物理仿真引擎。理一分殊——一套物理规律，统一求解刚体、软体、布料、杆与机器人；接触物理一致，保证无穿透。">
+<meta property="og:url" content="https://xingbaji.github.io/internphys-demos/">
+<meta property="og:image" content="https://xingbaji.github.io/internphys-demos/posters/000-dual-panda-carry-bar.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f6f6f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111113" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232b62d9'/%3E%3Ctext x='16' y='23' font-size='20' font-weight='700' text-anchor='middle' fill='white' font-family='sans-serif'%3EP%3C/text%3E%3C/svg%3E">
 <style>
 :root {
   color-scheme: light;
@@ -204,7 +216,7 @@ const badge = c => c.badge ? `<span class="badge${c.badge.ok ? '' : ' no'}">${es
 function cardHtml(c, tag) {
   const i = cards.push(c) - 1;
   return `<article class="card" tabindex="0" data-i="${i}" data-q="${esc((c.title + ' ' + c.look + ' ' + c.id).toLowerCase())}">
-    <div class="media"><video muted loop playsinline preload="none" poster="${esc(c.poster)}" data-src="${esc(c.video)}"></video><span class="play"></span></div>
+    <div class="media"><video muted loop playsinline preload="none" data-poster="${esc(c.poster)}" data-src="${esc(c.video)}"></video><span class="play"></span></div>
     <div class="body">${tag ? `<span class="tag">${esc(tag)}</span>` : ''}<h5>${esc(c.title)}</h5>${badge(c)}<p class="look">${esc(c.look)}</p><div class="meta">${metaOf(c)}</div></div></article>`;
 }
 const fmt = v => typeof v !== 'number' ? esc(v) : v >= 10 ? v.toFixed(1) : v >= 0.01 ? String(+v.toPrecision(2))
@@ -254,12 +266,12 @@ document.querySelectorAll('.search').forEach(inp => inp.addEventListener('input'
   page.querySelector('.empty').classList.toggle('hidden', !!page.querySelector('.card:not(.hidden)'));
 }));
 
-// videos: load the first frame when near the viewport, play on hover, pause when out of view
+// videos: the poster loads when the card nears the viewport (hidden pages load none), the video itself on hover; pause when out of view
 const io = new IntersectionObserver(es => es.forEach(e => {
   const v = e.target;
-  if (e.isIntersecting) { if (!v.src) { v.preload = 'metadata'; v.src = v.dataset.src + '#t=0.5'; } }
+  if (e.isIntersecting) v.poster ||= v.dataset.poster;
   else if (!v.paused) v.pause();
-}), {rootMargin: '300px'});
+}), {rootMargin: '600px'});
 document.querySelectorAll('.card video').forEach(v => io.observe(v));
 document.querySelectorAll('.card').forEach(card => {
   const v = card.querySelector('video');
@@ -269,7 +281,9 @@ document.querySelectorAll('.card').forEach(card => {
   card.addEventListener('keydown', e => { if (e.key === 'Enter') open(cards[card.dataset.i]); });
 });
 
+let back = '';   // an open demo has its own address, #<page>/<demo id>: a link to it opens it
 function open(c) {
+  back = location.hash.split('/')[0]; history.replaceState(null, '', (back || '#' + SITE.sections[0].id) + '/' + encodeURIComponent(c.id));
   $('dtitle').textContent = c.title; $('did').textContent = c.id;
   $('dtext').innerHTML = `${c.badge ? `<div class="label">${T.check}</div><p>${badge(c)} ${c.badge.law ? `<span class="law">${esc(c.badge.law)}</span>` : ''}</p>` : ''}
     <div class="label">${T.look}</div><p>${esc(c.look)}</p><div class="label">${T.why}</div>${c.why.split('\n').map(p => `<p>${esc(p)}</p>`).join('')}`;
@@ -280,16 +294,17 @@ function open(c) {
   $('dstats').classList.toggle('hidden', !$('dstats').innerHTML);
   $('dvid').poster = c.poster; $('dvid').src = c.video; $('dlg').showModal(); $('dvid').play().catch(() => {});
 }
-const close = () => { $('dvid').pause(); $('dvid').removeAttribute('src'); $('dvid').load(); $('dlg').close(); };
+const close = () => { history.replaceState(null, '', back || location.pathname); $('dvid').pause(); $('dvid').removeAttribute('src'); $('dvid').load(); $('dlg').close(); };
 $('dlg').querySelector('.close').addEventListener('click', close);
 $('dlg').addEventListener('click', e => { if (e.target === $('dlg')) close(); });
 $('dlg').addEventListener('cancel', e => { e.preventDefault(); close(); });
 
 function route() {
-  const h = location.hash.slice(1), id = SITE.sections.some(s => s.id === h) ? h : SITE.sections[0].id;
+  const [h, demo] = location.hash.slice(1).split('/'), id = SITE.sections.some(s => s.id === h) ? h : SITE.sections[0].id;
   SITE.sections.forEach(s => $('page-' + s.id).classList.toggle('hidden', s.id !== id));
   document.querySelectorAll('#tabs a').forEach(a => a.classList.toggle('on', a.dataset.id === id));
   if (h === id) $('page-' + id).scrollIntoView();
+  if (demo && byId[decodeURIComponent(demo)] && !$('dlg').open) open(byId[decodeURIComponent(demo)]);
 }
 window.addEventListener('hashchange', route);
 $('lang').addEventListener('click', e => { e.preventDefault(); location.href = $('lang').getAttribute('href') + location.hash; });   // keep the page
